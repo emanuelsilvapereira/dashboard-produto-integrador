@@ -1,5 +1,16 @@
 {
   "name": "dashboard",
-  "integrations": {},
-  "type": "angular"
+  "integrations": {
+    "capacitor": {}
+  },
+"type":"angular",
+"server":{
+  "proxy":{
+    "/api": {
+      "target": "",
+      "changeOrigin": true,
+      "secure": false
+      }
+    }
+  }
 }
