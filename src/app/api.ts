@@ -1,4 +1,4 @@
-import { HttpBackend, HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -6,13 +6,18 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class Api {
-    private apiUrl:string ="/api/leitura"
+    private apiUrl:string ="https://esp32-mongodb-idev3.onrender.com"
 
     constructor(private http: HttpClient) {}
 
     getSensores():Observable<any[]> {
 
-
-      return this.http.get<any[]>(this.apiUrl);
+      return this.http.get<any[]>(this.apiUrl+"/api/leituras/Dezan");
+    }
+    getHistoricoDia(data: string): Observable<any> {
+      const rotaBase = this.apiUrl + "/api/historico-dia/Dezan/"
+      let params = new HttpParams();
+      params = params.append('data', data);
+      return this.http.get<any>(rotaBase, { params: params });
     }
 }
