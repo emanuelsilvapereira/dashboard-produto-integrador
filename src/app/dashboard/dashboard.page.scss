@@ -45,3 +45,18 @@ ion-card-subtitle {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+.icon-text {
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+// Garante que o gráfico não saia da tela
+canvas {
+  max-height: 400px;
+}
+
+// Remove o padding de baixo do último <p> dentro do <ion-label>
+.ion-text-end.ion-no-margin {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}

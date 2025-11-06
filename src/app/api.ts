@@ -1,4 +1,4 @@
-import { HttpBackend, HttpClient, HttpParams } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpParams } from '@angular/common/http'; 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -10,14 +10,10 @@ export class Api {
 
     constructor(private http: HttpClient) {}
 
+    // Esta é a única função que precisamos!
     getSensores():Observable<any[]> {
-
       return this.http.get<any[]>(this.apiUrl+"/api/leituras/Dezan");
     }
-    getHistoricoDia(data: string): Observable<any> {
-      const rotaBase = this.apiUrl + "/api/historico-dia/Dezan/"
-      let params = new HttpParams();
-      params = params.append('data', data);
-      return this.http.get<any>(rotaBase, { params: params });
-    }
+
+    // A função getHistoricoDia() foi removida.
 }

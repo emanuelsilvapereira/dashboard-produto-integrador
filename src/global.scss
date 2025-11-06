@@ -35,3 +35,15 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* ====================================================== */
+/* CORREÇÃO PARA O "QUADRADO BRANCO" DO MODAL (ion-datetime) */
+/* ====================================================== */
+/*
+  Este CSS é aplicado globalmente e força o ion-datetime
+  dentro de um modal a ter uma altura mínima,
+  tornando-o visível.
+*/
+ion-modal ion-datetime {
+  min-height: 420px;
+}
