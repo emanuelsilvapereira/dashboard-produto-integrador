@@ -44,6 +44,126 @@
   dentro de um modal a ter uma altura mínima,
   tornando-o visível.
 */
+ion-modal ion-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Garante que ele tenha altura */
+}
+
+/* Isto força o 'ion-datetime' a ocupar todo 
+  o espaço flexível disponível.
+*/
 ion-modal ion-datetime {
-  min-height: 420px;
+  flex: 1; /* Ocupa o espaço */
+  min-height: 420px; /* Garante uma altura mínima */
+}
+
+/* =============================
+   🌑 TEMA DARK COMPLETO - IONIC
+   ============================= */
+
+/* Cores principais */
+:root {
+  --ion-background-color: #000 !important;
+  --ion-background-color-rgb: 0, 0, 0 !important;
+
+  --ion-text-color: #fff !important;
+  --ion-text-color-rgb: 255, 255, 255 !important;
+
+  --ion-toolbar-background: #000 !important;
+  --ion-toolbar-color: #fff !important;
+
+  --ion-item-background: #111 !important;
+  --ion-card-background: #111 !important;
+
+  --ion-color-primary: #1a73e8 !important;
+  --ion-color-primary-rgb: 26, 115, 232 !important;
+
+  --ion-color-medium: #666 !important;
+  --ion-color-light: #222 !important;
+}
+
+/* =============================
+   🔹 GLOBAIS
+   ============================= */
+
+ion-app,
+ion-content,
+ion-header,
+ion-toolbar,
+ion-page,
+body {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+/* Força o fundo do toolbar (corrige o branco que sobra no iOS/web) */
+ion-toolbar::part(container),
+ion-header::part(container) {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/* Corrige o título */
+ion-title {
+  color: #fff !important;
+}
+
+/* Itens de lista e inputs */
+ion-item {
+  --background: #111 !important;
+  color: #fff !important;
+}
+
+/* Cards e containers */
+ion-card {
+  background: #111 !important;
+  color: #fff !important;
+}
+
+/* Modal e alertas */
+ion-modal {
+  --background: #111 !important;
+  color: #fff !important;
+}
+
+ion-alert {
+  --background: #111 !important;
+  color: #fff !important;
+}
+
+/* Botões */
+ion-button {
+  --background: #1a73e8 !important;
+  --color: #fff !important;
+}
+
+ion-button::part(native) {
+  background: #1a73e8 !important;
+  color: #fff !important;
+}
+
+/* Inputs e selects */
+ion-input,
+ion-select,
+ion-datetime {
+  --background: #111 !important;
+  --color: #fff !important;
+}
+
+/* Corrige possíveis bordas brancas no gráfico */
+canvas {
+  background-color: transparent !important;
+}
+
+/* Scrollbar escura */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
 }

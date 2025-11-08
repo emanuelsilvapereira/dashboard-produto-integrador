@@ -1,62 +1,151 @@
-@import 'animate.css';
+.dashboard-container {
+  padding: 16px;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+}
 
-.dashboard-card {
+.data-btn {
+  margin-bottom: 16px;
+  --background: #1a73e8;
+  --border-radius: 12px;
+  font-weight: 500;
+}
+
+.chart-card {
+  background: #111;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 12px;
+  box-shadow: 0 0 20px rgba(26, 115, 232, 0.2);
+  margin-bottom: 16px;
+}
+
+.info-card {
+  background: #111;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  }
 }
 
-.measurement-item {
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(26, 115, 232, 0.4);
+}
+
+.sem-dados {
+  text-align: center;
+  color: #777;
+  margin-top: 20px;
+}
+
+/* 🔹 Status da bomba */
+.ligada {
+  color: #00ff80;
+  font-weight: 600;
+}
+.desligada {
+  color: #ff5050;
+  font-weight: 600;
+}
+
+/* ✨ Animações */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+.animate-slide-up {
+  animation: slideUp 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Modal */
+.modal-actions {
   display: flex;
-  align-items: center;
-  margin: 16px 0;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(var(--ion-color-primary-rgb), 0.1);
-
-  .measurement-icon {
-    font-size: 2rem;
-    margin-right: 16px;
-    color: var(--ion-color-primary);
-  }
-
-  .measurement-value {
-    h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--ion-color-dark);
-    }
-
-    p {
-      margin: 4px 0 0;
-      color: var(--ion-color-medium);
-    }
-  }
+  justify-content: space-between;
+  padding: 16px;
+}
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 🔹 Centraliza horizontalmente */
+  justify-content: flex-start;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
 }
 
-ion-card-subtitle {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.icon-text {
-  vertical-align: middle;
-  margin-right: 6px;
-}
-
-// Garante que o gráfico não saia da tela
-canvas {
-  max-height: 400px;
+/* Botão */
+.data-btn {
+  width: 90%;
+  max-width: 400px;
+  margin: 10px auto 20px auto;
+  --background: #1a73e8;
+  --border-radius: 12px;
+  font-weight: 500;
 }
 
-// Remove o padding de baixo do último <p> dentro do <ion-label>
-.ion-text-end.ion-no-margin {
-    padding-bottom: 0;
-    margin-bottom: 0;
+/* Gráfico */
+.chart-card {
+  background: #111;
+  border-radius: 16px;
+  padding: 16px;
+  width: 90%;
+  max-width: 700px; /* 🔹 Limita largura */
+  box-shadow: 0 0 20px rgba(26, 115, 232, 0.2);
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center; /* 🔹 Centraliza canvas */
+}
+
+/* Cards de informações */
+.info-card {
+  width: 90%;
+  max-width: 700px;
+  background: #111;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(26, 115, 232, 0.4);
+}
+
+/* Texto de "sem dados" centralizado */
+.sem-dados {
+  text-align: center;
+  color: #777;
+  margin-top: 20px;
+}
+
+/* Status */
+.ligada { color: #00ff80; font-weight: 600; }
+.desligada { color: #ff5050; font-weight: 600; }
+
+/* Animações */
+.animate-fade-in { animation: fadeIn 0.6s ease-in-out; }
+.animate-slide-up { animation: slideUp 0.5s ease-in-out; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
 }

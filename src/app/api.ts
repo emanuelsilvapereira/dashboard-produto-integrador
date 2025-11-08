@@ -1,19 +1,19 @@
-import { HttpBackend, HttpClient, HttpParams } from '@angular/common/http'; 
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Api {
-    private apiUrl:string ="https://esp32-mongodb-idev3.onrender.com"
+  private readonly baseUrl = 'https://esp32-mongodb-idev3.onrender.com/api';
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-    // Esta é a única função que precisamos!
-    getSensores():Observable<any[]> {
-      return this.http.get<any[]>(this.apiUrl+"/api/leituras/Dezan");
-    }
-
-    // A função getHistoricoDia() foi removida.
+  // Busca histórico de um dia específico
+  getHistoricoDoDia(data: string): Observable<any[]> {
+    const collection = 'Dezan'; // sua collection
+    const url = `${this.baseUrl}/historico-dia/${collection}?data=${data}`;
+    return this.http.get<any[]>(url);
+  }
 }

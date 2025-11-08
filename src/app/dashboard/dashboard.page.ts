@@ -1,136 +1,111 @@
-import { Component, OnInit } from '@angular/core';
-import { Api } from '../api';
-import { ChartData, ChartOptions } from 'chart.js';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ChartConfiguration } from 'chart.js';
+import { NgChartsModule } from 'ng2-charts';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, FormsModule, IonicModule, NgChartsModule]
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
+  isModalOpen = false;
+  tempDataSelecionada: string = new Date().toISOString();
+  dataSelecionada: string = new Date().toISOString();
+  historicoDoDia: any[] = [];
+  lineChartData: ChartConfiguration<'line'>['data'] | null = null;
 
-  // Lista completa com todos os registros
-  private listaMestreSensores: any[] = [];
-
-  // Dados filtrados do dia
-  public historicoDoDia: any[] = [];
-
-  // Variáveis de data e modal
-  public dataSelecionada: string;
-  public dataSelecionadaFormatada: string = '';
-  tempDataSelecionada: string;
-  public isModalOpen = false;
-
-  // Variáveis do gráfico
-  public lineChartData: ChartData<'line'> | null = null;
-  public lineChartLabels: string[] = [];
-  public lineChartOptions: ChartOptions<'line'> = {
+  // Opções do gráfico
+  lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
-    maintainAspectRatio: true,
+    elements: {
+      line: { tension: 0.4, borderWidth: 3 },
+      point: { radius: 5, hoverRadius: 7 }
+    },
+    scales: {
+      x: { ticks: { color: '#aaa' }, grid: { color: '#222' } },
+      y: { beginAtZero: true, ticks: { color: '#aaa' }, grid: { color: '#222' } }
+    },
+    plugins: {
+      legend: {
+        labels: { color: '#fff', font: { size: 14 } }
+      },
+      tooltip: {
+        backgroundColor: '#111',
+        titleColor: '#1a73e8',
+        bodyColor: '#fff',
+        borderColor: '#1a73e8',
+        borderWidth: 1
+      }
+    },
+    animation: {
+      duration: 800,
+      easing: 'easeOutQuart'
+    }
   };
 
-  constructor(private apiService: Api) {
-    // Define a data de hoje como padrão
-    this.dataSelecionada = new Date().toISOString();
-    this.tempDataSelecionada = this.dataSelecionada;
-  }
+  private intervalo!: any;
+
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.carregarDadosMestre();
+    this.carregarDados();
+    this.intervalo = setInterval(() => this.carregarDados(), 5000); // 🔁 Atualiza a cada 5s
   }
 
-  carregarDadosMestre() {
-    this.apiService.getSensores().subscribe({
-      next: (data: any[]) => {
-        this.listaMestreSensores = data;
-        console.log(`Dados carregados: ${this.listaMestreSensores.length} itens.`);
-        this.filtrarDadosPorData();
+  ngOnDestroy() {
+    clearInterval(this.intervalo);
+  }
+
+  get dataSelecionadaFormatada(): string {
+    const data = new Date(this.dataSelecionada);
+    return data.toLocaleDateString('pt-BR');
+  }
+
+  abrirModal() { this.isModalOpen = true; }
+  cancelarModal() { this.isModalOpen = false; }
+  confirmarData() { this.dataSelecionada = this.tempDataSelecionada; this.isModalOpen = false; this.carregarDados(); }
+  dataMudouTemp(event: any) { this.tempDataSelecionada = event.detail.value; }
+
+  carregarDados() {
+    const data = new Date(this.dataSelecionada);
+    const dataFormatada = `${data.getFullYear()}-${(data.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${data.getDate().toString().padStart(2, '0')}`;
+
+    const url = `https://esp32-mongodb-idev3.onrender.com/api/historico-dia/Dezan?data=${dataFormatada}`;
+
+    this.http.get<any[]>(url).subscribe({
+      next: (res) => {
+        this.historicoDoDia = res || [];
+        if (this.historicoDoDia.length > 0) {
+          const labels = this.historicoDoDia.map(r => r.timestamp.split(', ')[1]);
+          const temperaturas = this.historicoDoDia.map(r => r.temperatura);
+
+          this.lineChartData = {
+            labels,
+            datasets: [
+              {
+                data: temperaturas,
+                label: '🌡️ Temperatura (°C)',
+                borderColor: '#1a73e8',
+                backgroundColor: 'rgba(26, 115, 232, 0.2)',
+                fill: true,
+                pointBackgroundColor: '#1a73e8',
+                pointBorderColor: '#fff'
+              }
+            ]
+          };
+        } else {
+          this.lineChartData = null;
+        }
       },
-      error: (err) => {
-        console.error('Erro ao buscar sensores:', err);
-        this.listaMestreSensores = [];
-      }
+      error: (err) => console.error('Erro ao carregar dados:', err)
     });
-  }
-
-  // =======================================================
-  // CONTROLE DO MODAL
-  // =======================================================
-  abrirModal() {
-    this.tempDataSelecionada = this.dataSelecionada;
-    this.isModalOpen = true;
-  }
-
-  dataMudouTemp(event: any) {
-    this.tempDataSelecionada = event.detail.value;
-  }
-
-  cancelarModal() {
-    this.isModalOpen = false;
-  }
-
-  confirmarData() {
-    this.dataSelecionada = this.tempDataSelecionada;
-    this.filtrarDadosPorData();
-    this.isModalOpen = false;
-  }
-
-  // =======================================================
-  // FILTRAGEM E GRÁFICO
-  // =======================================================
-  filtrarDadosPorData() {
-    const dataFiltro = this.formatarData(this.dataSelecionada);
-    this.dataSelecionadaFormatada = dataFiltro;
-    console.log(`Filtrando por data: ${dataFiltro}`);
-
-    this.historicoDoDia = this.listaMestreSensores.filter(item =>
-      item.timestamp && item.timestamp.startsWith(dataFiltro)
-    );
-
-    console.log(`Itens encontrados: ${this.historicoDoDia.length}`);
-
-    if (this.historicoDoDia.length > 0) {
-      const dadosOrdenados = [...this.historicoDoDia].reverse();
-      const temperaturas = dadosOrdenados.map(item => item.temperatura);
-      const umidades = dadosOrdenados.map(item => item.umidade);
-
-      this.lineChartLabels = dadosOrdenados.map(item => {
-        const partes = item.timestamp.split(', ');
-        return partes.length > 1 ? partes[1] : item.timestamp;
-      });
-
-      this.lineChartData = {
-        labels: this.lineChartLabels,
-        datasets: [
-          {
-            data: temperaturas,
-            label: 'Temperatura (°C)',
-            borderColor: '#EB445A',
-            backgroundColor: 'rgba(235,68,90,0.3)',
-            fill: 'origin',
-            tension: 0.3,
-          },
-          {
-            data: umidades,
-            label: 'Umidade (%)',
-            borderColor: '#3880FF',
-            backgroundColor: 'rgba(56,128,255,0.3)',
-            fill: 'origin',
-            tension: 0.3,
-          }
-        ]
-      };
-    } else {
-      this.lineChartData = null;
-    }
-  }
-
-  private formatarData(isoString: string): string {
-    const data = new Date(isoString);
-    const dia = data.getDate().toString().padStart(2, '0');
-    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-    const ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
   }
 }
